@@ -524,6 +524,7 @@ public class Bootstrap {
 
             AnsiLog.info("Try to attach process " + pid);
             AnsiLog.debug("Start arthas-core.jar args: " + attachArgs);
+            // 启动arthas core包.
             ProcessUtils.startArthasCore(pid, attachArgs);
 
             AnsiLog.info("Attach process {} success.", pid);

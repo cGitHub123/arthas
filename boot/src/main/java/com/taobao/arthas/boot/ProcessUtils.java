@@ -181,6 +181,7 @@ public class ProcessUtils {
 
     public static void startArthasCore(int targetPid, List<String> attachArgs) {
         // find java/java.exe, then try to find tools.jar
+        // Library/Java/JavaVirtualMachines/jdk1.8.0_161.jdk/Contents/Home/jre.
         String javaHome = findJavaHome();
 
         // find java/java.exe

@@ -24,7 +24,9 @@ public class Arthas {
     private static final String DEFAULT_TELNET_PORT = "3658";
     private static final String DEFAULT_HTTP_PORT = "8563";
 
+    // 真正的启动入口在这里.脚本/boot都是在这里启动的.
     private Arthas(String[] args) throws Exception {
+        // 这里也有初始的参数.
         attachAgent(parse(args));
     }
 
@@ -37,14 +39,20 @@ public class Arthas {
                 .setShortName("telnet-port").setDefaultValue(DEFAULT_TELNET_PORT);
         Option httpPort = new TypedOption<Integer>().setType(Integer.class)
                 .setShortName("http-port").setDefaultValue(DEFAULT_HTTP_PORT);
+        // 过期时间.
         Option sessionTimeout = new TypedOption<Integer>().setType(Integer.class)
                         .setShortName("session-timeout").setDefaultValue("" + Configure.DEFAULT_SESSION_TIMEOUT_SECONDS);
 
+        // 看不懂.
         Option tunnelServer = new TypedOption<String>().setType(String.class).setShortName("tunnel-server");
+
+        // 看不懂.
         Option agentId = new TypedOption<String>().setType(String.class).setShortName("agent-id");
 
+        // 看不懂.
         Option statUrl = new TypedOption<String>().setType(String.class).setShortName("stat-url");
 
+        // 看不懂.
         CLI cli = CLIs.create("arthas").addOption(pid).addOption(core).addOption(agent).addOption(target)
                 .addOption(telnetPort).addOption(httpPort).addOption(sessionTimeout).addOption(tunnelServer).addOption(agentId).addOption(statUrl);
         CommandLine commandLine = cli.parse(Arrays.asList(args));
@@ -54,11 +62,13 @@ public class Arthas {
         configure.setArthasAgent((String) commandLine.getOptionValue("agent"));
         configure.setArthasCore((String) commandLine.getOptionValue("core"));
         configure.setSessionTimeout((Integer)commandLine.getOptionValue("session-timeout"));
+
         if (commandLine.getOptionValue("target-ip") == null) {
             throw new IllegalStateException("as.sh is too old to support web console, " +
                     "please run the following command to upgrade to latest version:" +
                     "\ncurl -sLk https://alibaba.github.io/arthas/install.sh | sh");
         }
+
         configure.setIp((String) commandLine.getOptionValue("target-ip"));
         configure.setTelnetPort((Integer) commandLine.getOptionValue("telnet-port"));
         configure.setHttpPort((Integer) commandLine.getOptionValue("http-port"));
@@ -71,6 +81,7 @@ public class Arthas {
 
     private void attachAgent(Configure configure) throws Exception {
         VirtualMachineDescriptor virtualMachineDescriptor = null;
+
         for (VirtualMachineDescriptor descriptor : VirtualMachine.list()) {
             String pid = descriptor.id();
             if (pid.equals(Integer.toString(configure.getJavaPid()))) {
