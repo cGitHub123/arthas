@@ -1,39 +1,27 @@
 package com.taobao.arthas.client;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.apache.commons.net.telnet.InvalidTelnetOptionException;
-import org.apache.commons.net.telnet.TelnetClient;
-import org.apache.commons.net.telnet.TelnetOptionHandler;
-import org.apache.commons.net.telnet.WindowSizeOptionHandler;
-
 import com.taobao.arthas.common.OSUtils;
 import com.taobao.arthas.common.UsageRender;
 import com.taobao.middleware.cli.CLI;
 import com.taobao.middleware.cli.CommandLine;
 import com.taobao.middleware.cli.UsageMessageFormatter;
-import com.taobao.middleware.cli.annotations.Argument;
-import com.taobao.middleware.cli.annotations.CLIConfigurator;
-import com.taobao.middleware.cli.annotations.Description;
-import com.taobao.middleware.cli.annotations.Name;
-import com.taobao.middleware.cli.annotations.Option;
-import com.taobao.middleware.cli.annotations.Summary;
-
+import com.taobao.middleware.cli.annotations.*;
 import jline.Terminal;
 import jline.TerminalSupport;
 import jline.UnixTerminal;
 import jline.console.ConsoleReader;
 import jline.console.KeyMap;
+import org.apache.commons.net.telnet.InvalidTelnetOptionException;
+import org.apache.commons.net.telnet.TelnetClient;
+import org.apache.commons.net.telnet.TelnetOptionHandler;
+import org.apache.commons.net.telnet.WindowSizeOptionHandler;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author ralf0131 2016-12-29 11:55.
@@ -160,11 +148,13 @@ public class TelnetConsole {
 
         TelnetConsole telnetConsole = new TelnetConsole();
 
+        // 没看懂.
         CLI cli = CLIConfigurator.define(TelnetConsole.class);
 
         try {
             CommandLine commandLine = cli.parse(Arrays.asList(args));
 
+            // 一直没看懂.
             CLIConfigurator.inject(commandLine, telnetConsole);
 
             if (telnetConsole.isHelp()) {

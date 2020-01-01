@@ -1,23 +1,11 @@
 package com.taobao.arthas.boot;
 
+import com.taobao.arthas.common.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.InputMismatchException;
-
-import com.taobao.arthas.common.AnsiLog;
-import com.taobao.arthas.common.ExecutingCommand;
-import com.taobao.arthas.common.IOUtils;
-import com.taobao.arthas.common.JavaVersionUtils;
-import com.taobao.arthas.common.PidUtils;
+import java.util.*;
 
 /**
  *
@@ -29,6 +17,7 @@ public class ProcessUtils {
 
     @SuppressWarnings("resource")
     public static int select(boolean v, int telnetPortPid) throws InputMismatchException {
+        //
         Map<Integer, String> processMap = listProcessByJps(v);
         // Put the port that is already listening at the first
         if (telnetPortPid > 0 && processMap.containsKey(telnetPortPid)) {
@@ -81,6 +70,7 @@ public class ProcessUtils {
         return -1;
     }
 
+    // 知识点，获取运行的java进程.
     private static Map<Integer, String> listProcessByJps(boolean v) {
         Map<Integer, String> result = new LinkedHashMap<Integer, String>();
 

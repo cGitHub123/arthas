@@ -259,8 +259,10 @@ public class Bootstrap {
     public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException,
                     ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException,
                     IllegalArgumentException, InvocationTargetException {
+        // 获取包路径package com.taobao.arthas.boot.
         Package bootstrapPackage = Bootstrap.class.getPackage();
         if (bootstrapPackage != null) {
+            // 这个地方获取到就是null.
             String arthasBootVersion = bootstrapPackage.getImplementationVersion();
             if (arthasBootVersion != null) {
                 AnsiLog.info("arthas-boot version: " + arthasBootVersion);
@@ -271,10 +273,14 @@ public class Bootstrap {
 
         Bootstrap bootstrap = new Bootstrap();
 
+        // 没看懂
         CLI cli = CLIConfigurator.define(Bootstrap.class);
+
+        // 没看懂
         CommandLine commandLine = cli.parse(Arrays.asList(args));
 
         try {
+            // 没看懂
             CLIConfigurator.inject(commandLine, bootstrap);
         } catch (Throwable e) {
             e.printStackTrace();
@@ -282,14 +288,18 @@ public class Bootstrap {
             System.exit(1);
         }
 
+        // 没看懂
         if (bootstrap.isVerbose()) {
             AnsiLog.level(Level.ALL);
         }
+
+        // 没看懂
         if (bootstrap.isHelp()) {
             System.out.println(usage(cli));
             System.exit(0);
         }
 
+        // 如果目前镜像仓库是null，则为阿里云镜像仓库.
         if (bootstrap.getRepoMirror() == null || bootstrap.getRepoMirror().trim().isEmpty()) {
             bootstrap.setRepoMirror("center");
             // if timezone is +0800, default repo mirror is aliyun
@@ -299,6 +309,7 @@ public class Bootstrap {
         }
         AnsiLog.debug("Repo mirror:" + bootstrap.getRepoMirror());
 
+        // 没看懂.
         if (bootstrap.isVersions()) {
             if (mavenMetaData == null) {
                 mavenMetaData = DownloadUtils.readMavenMetaData(bootstrap.getRepoMirror(), bootstrap.isuseHttp());
@@ -307,13 +318,14 @@ public class Bootstrap {
             System.exit(0);
         }
 
+        // 如果是java6或者java7，用HTTP,没看懂.
         if (JavaVersionUtils.isJava6() || JavaVersionUtils.isJava7()) {
             bootstrap.setuseHttp(true);
             AnsiLog.debug("Java version is {}, only support http, set useHttp to true.",
                             JavaVersionUtils.javaVersionStr());
         }
 
-        // check telnet/http port
+        // check telnet/http port,检查是否已经开启.
         int telnetPortPid = -1;
         int httpPortPid = -1;
         if (bootstrap.getTelnetPort() > 0) {
@@ -333,6 +345,7 @@ public class Bootstrap {
         // select pid
         if (pid < 0) {
             try {
+                // 这里会进行阻塞,手动选择需要监控的进程.
                 pid = ProcessUtils.select(bootstrap.isVerbose(), telnetPortPid);
             } catch (InputMismatchException e) {
                 System.out.println("Please input an integer to select pid.");
@@ -364,10 +377,12 @@ public class Bootstrap {
 
         // find arthas home
         File arthasHomeDir = null;
+        // 没看懂.
         if (bootstrap.getArthasHome() != null) {
             verifyArthasHome(bootstrap.getArthasHome());
             arthasHomeDir = new File(bootstrap.getArthasHome());
         }
+        // 如果指定了版本号，就用指定版本号的，没有就下载.
         if (arthasHomeDir == null && bootstrap.getUseVersion() != null) {
             // try to find from ~/.arthas/lib
             File specialVersionDir = new File(System.getProperty("user.home"), ".arthas" + File.separator + "lib"
@@ -382,6 +397,7 @@ public class Bootstrap {
         }
 
         // Try set the directory where arthas-boot.jar is located to arhtas home
+        // 没看懂.
         if (arthasHomeDir == null) {
             CodeSource codeSource = Bootstrap.class.getProtectionDomain().getCodeSource();
             if (codeSource != null) {
@@ -399,6 +415,7 @@ public class Bootstrap {
 
         // try to download from remote server
         if (arthasHomeDir == null) {
+            // /Users/caibin/.arthas/lib/...
             boolean checkFile =  ARTHAS_LIB_DIR.exists() || ARTHAS_LIB_DIR.mkdirs();
             if(!checkFile){
                 AnsiLog.error("cannot create directory {}: maybe permission denied", ARTHAS_LIB_DIR.getAbsolutePath());
@@ -412,6 +429,7 @@ public class Bootstrap {
              * 3. compare two version
              * </pre>
              */
+            // 获取本地和远程的最新版本.
             List<String> versionList = listNames(ARTHAS_LIB_DIR);
             Collections.sort(versionList);
 
@@ -420,12 +438,16 @@ public class Bootstrap {
                 localLastestVersion = versionList.get(versionList.size() - 1);
             }
 
+            // 没看懂.
             if (mavenMetaData == null) {
+                // 去阿里云镜像
                 mavenMetaData = DownloadUtils.readMavenMetaData(bootstrap.getRepoMirror(), bootstrap.isuseHttp());
             }
 
+            // 获取远程version 3.17
             String remoteLastestVersion = DownloadUtils.readMavenReleaseVersion(mavenMetaData);
 
+            // 本地版本和远程比较，如果落后于远程版本，就拉去最新的jar包.
             boolean needDownload = false;
             if (localLastestVersion == null) {
                 if (remoteLastestVersion == null) {
@@ -462,6 +484,7 @@ public class Bootstrap {
 
         AnsiLog.info("arthas home: " + arthasHomeDir);
 
+        //
         if (telnetPortPid > 0 && pid == telnetPortPid) {
             AnsiLog.info("The target process already listen port {}, skip attach.", bootstrap.getTelnetPort());
         } else {
@@ -510,11 +533,14 @@ public class Bootstrap {
             System.exit(0);
         }
 
+        // arthas client包还是要启动的.
         // start java telnet client
         // find arthas-client.jar
         URLClassLoader classLoader = new URLClassLoader(
                         new URL[] { new File(arthasHomeDir, "arthas-client.jar").toURI().toURL() });
+        // 加载TelnetConsole这个类.
         Class<?> telnetConsoleClas = classLoader.loadClass("com.taobao.arthas.client.TelnetConsole");
+        // 找到对应的main方法.
         Method mainMethod = telnetConsoleClas.getMethod("main", String[].class);
         List<String> telnetArgs = new ArrayList<String>();
 

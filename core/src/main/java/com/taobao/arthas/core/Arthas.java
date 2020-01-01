@@ -79,6 +79,7 @@ public class Arthas {
         }
         VirtualMachine virtualMachine = null;
         try {
+            // 知识点.
             if (null == virtualMachineDescriptor) { // 使用 attach(String pid) 这种方式
                 virtualMachine = VirtualMachine.attach("" + configure.getJavaPid());
             } else {
@@ -101,6 +102,7 @@ public class Arthas {
             //convert jar path to unicode string
             configure.setArthasAgent(encodeArg(arthasAgentPath));
             configure.setArthasCore(encodeArg(configure.getArthasCore()));
+            // 最核心的一句，靠这个和指定的JVM建立了联系.
             virtualMachine.loadAgent(arthasAgentPath,
                     configure.getArthasCore() + ";" + configure.toString());
         } finally {

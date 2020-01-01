@@ -106,6 +106,7 @@ public class AgentBootstrap {
         Spy.initForAgentLauncher(classLoader, onBefore, onReturn, onThrows, beforeInvoke, afterInvoke, throwInvoke, reset);
     }
 
+    // 如果我们通过脚本启动执行的是这个业务逻辑,在shell脚本里面已经自行了arthas-boot的相关内容.
     private static synchronized void main(String args, final Instrumentation inst) {
         try {
             ps.println("Arthas server agent start...");
@@ -115,12 +116,14 @@ public class AgentBootstrap {
             String agentJar = args.substring(0, index);
             final String agentArgs = args.substring(index);
 
+            // agentJar = /Users/caibin/.arthas/lib/3.1.7/arthas/arthas-core.jar
             File agentJarFile = new File(agentJar);
             if (!agentJarFile.exists()) {
                 ps.println("Agent jar file does not exist: " + agentJarFile);
                 return;
             }
 
+            // 找到spyJar.这个spyjar到底是干什么的呢?看不懂.
             File spyJarFile = new File(agentJarFile.getParentFile(), ARTHAS_SPY_JAR);
             if (!spyJarFile.exists()) {
                 ps.println("Spy jar file does not exist: " + spyJarFile);
@@ -168,15 +171,23 @@ public class AgentBootstrap {
          * ArthasBootstrap bootstrap = ArthasBootstrap.getInstance(javaPid, inst);
          * </pre>
          */
+        // com.taobao.arthas.core.config.Configure.
         Class<?> classOfConfigure = agentLoader.loadClass(ARTHAS_CONFIGURE);
+        // toConfigure.
         Object configure = classOfConfigure.getMethod(TO_CONFIGURE, String.class).invoke(null, args);
+        // getJavaPid.
         int javaPid = (Integer) classOfConfigure.getMethod(GET_JAVA_PID).invoke(configure);
+        // com.taobao.arthas.core.server.ArthasBootstrap.
         Class<?> bootstrapClass = agentLoader.loadClass(ARTHAS_BOOTSTRAP);
+        //
         Object bootstrap = bootstrapClass.getMethod(GET_INSTANCE, int.class, Instrumentation.class).invoke(null, javaPid, inst);
+        // 获取到instance后调用isBind方法.
         boolean isBind = (Boolean) bootstrapClass.getMethod(IS_BIND).invoke(bootstrap);
+        // 织入对应的方法.
         if (!isBind) {
             try {
                 ps.println("Arthas start to bind...");
+                // 调用bind方法.
                 bootstrapClass.getMethod(BIND, classOfConfigure).invoke(bootstrap, configure);
                 ps.println("Arthas server bind success.");
                 return;

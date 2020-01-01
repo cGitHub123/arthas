@@ -41,6 +41,7 @@ public class ExecutingCommand {
      *         string if the command failed
      */
     public static List<String> runNative(String[] cmdToRunWithArgs) {
+        // 这里又启动一个线程.
         Process p = null;
         try {
             p = Runtime.getRuntime().exec(cmdToRunWithArgs);
@@ -61,6 +62,7 @@ public class ExecutingCommand {
             while ((line = reader.readLine()) != null) {
                 sa.add(line);
             }
+            // 当前线程暂停.
             p.waitFor();
         } catch (IOException e) {
             AnsiLog.trace("Problem reading output from {}:", Arrays.toString(cmdToRunWithArgs));
