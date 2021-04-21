@@ -7,6 +7,7 @@
 * [sysprop](sysprop.md)
 * [sysenv](sysenv.md)
 * [vmoption](vmoption.md)
+* [perfcounter](perfcounter.md)
 * [logger](logger.md)
 * [mbean](mbean.md)
 * [getstatic](getstatic.md)
@@ -21,6 +22,7 @@
 * [jad](jad.md)
 * [classloader](classloader.md)
 * [mc](mc.md)
+* [retransform](retransform.md)
 * [redefine](redefine.md)
 
 * [monitor](monitor.md)
@@ -32,9 +34,12 @@
 * [profiler](profiler.md)
 
 * [cat](cat.md)
+* [echo](echo.md)
 * [grep](grep.md)
+* [base64](base64.md)
 * [tee](tee.md)
 * [pwd](pwd.md)
+* [auth](auth.md)
 * [options](options.md)
 
 ### Arthas 基础命令
@@ -46,6 +51,5 @@
 * version——输出当前目标 Java 进程所加载的 Arthas 版本号
 * history——打印命令历史
 * quit——退出当前 Arthas 客户端，其他 Arthas 客户端不受影响
-* stop——和`shutdown`命令一致（推荐使用，避免误操作）
-* shutdown——关闭 Arthas 服务端，所有 Arthas 客户端全部退出
+* stop——关闭 Arthas 服务端，所有 Arthas 客户端全部退出
 * [keymap](keymap.md)——Arthas快捷键列表及自定义快捷键
